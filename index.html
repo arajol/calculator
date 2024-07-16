@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: black;
+        }
+        .col-md-2 {
+            border: 2px solid gray;
+            padding: 25px;
+            margin: 400px auto; /* Center the calculator horizontally */
+            border-radius: 10px;
+        }
+        button {
+            background-color: white;
+            width: 40px;
+            height: 40px;
+        }
+        #box {
+            max-width: 180px;
+            height: 40px;
+            background-color: lightgray;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="row d-flex justify-content-center align-items-center text-center">
+        <div class="col-md-2">
+            <div id="box"></div>
+            <button>7</button><button>8</button><button>9</button><button>/</button>
+            <br><button>4</button><button>5</button><button>6</button><button>x</button>
+            <br><button>1</button><button>2</button><button>3</button><button>-</button>
+            <br><button>c</button><button>0</button><button>=</button><button>+</button>
+        </div>
+    </div>
+    <script>
+        // This function runs when the whole page is loaded
+        document.addEventListener('DOMContentLoaded', function () {
+            // Get all the buttons and the display box
+            const buttons = document.querySelectorAll('button');
+            const display = document.getElementById('box');
+
+            // Variables to keep track of inputs and operations
+            let currentInput = '';  // What you are typing now
+            let previousInput = ''; // The previous number you typed
+            let operator = '';      // The operator (+, -, x, /)
+
+            // Add click event listeners to each button
+            buttons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const value = this.textContent; // Get the button text
+
+                    // If the 'c' button is clicked, clear everything
+                    if (value === 'c') {
+                        currentInput = '';
+                        previousInput = '';
+                        operator = '';
+                        display.textContent = '';
+                    }
+                    // If the '=' button is clicked, perform the calculation
+                    else if (value === '=') {
+                        if (currentInput && previousInput && operator) {
+                            currentInput = evaluate(previousInput, currentInput, operator);
+                            display.textContent = currentInput; // Show the result
+                            previousInput = '';
+                            operator = '';
+                        }
+                    }
+                    // If an operator button (+, -, x, /) is clicked
+                    else if (['+', '-', 'x', '/'].includes(value)) {
+                        if (currentInput) {
+                            if (previousInput) {
+                                // Calculate intermediate result if there is a previous input
+                                currentInput = evaluate(previousInput, currentInput, operator);
+                                display.textContent = currentInput; // Show the result
+                            }
+                            // Move current input to previous and store the operator
+                            previousInput = currentInput;
+                            currentInput = '';
+                            operator = value;
+                        }
+                    }
+                    // If a number button (0-9) is clicked
+                    else {
+                        // Add the number to the current input and update the display
+                        currentInput += value;
+                        display.textContent = currentInput;
+                    }
+                });
+            });
+
+            // This function performs the calculation
+            function evaluate(num1, num2, operator) {
+                num1 = parseFloat(num1); // Convert strings to numbers
+                num2 = parseFloat(num2);
+                switch (operator) {
+                    case '+':
+                        return (num1 + num2).toString(); // Perform addition
+                    case '-':
+                        return (num1 - num2).toString(); // Perform subtraction
+                    case 'x':
+                        return (num1 * num2).toString(); // Perform multiplication
+                    case '/':
+                        return (num1 / num2).toString(); // Perform division
+                    default:
+                        return '';
+                }
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js" integrity="sha384-0pUGZvbkm6XF6gxjEnlmuGrJXVbNuzT9qBBavbLwCsOGabYfZo0T0to5eqruptLy" crossorigin="anonymous"></script>
+</body>
+</html>
